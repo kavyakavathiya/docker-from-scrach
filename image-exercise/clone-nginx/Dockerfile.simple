@@ -1,0 +1,9 @@
+FROM nginx:alpine   
+RUN apk add git
+WORKDIR /NEWAPP
+ARG USERNAME
+ARG USERPASSWORD
+RUN git clone https://${USERNAME}:${USERPASSWORD}@github.com/kavyakavathiya/simple_html 
+RUN cp /NEWAPP/simple_html/index.html /usr/share/nginx/html
+
+

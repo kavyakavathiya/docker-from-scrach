@@ -1,0 +1,22 @@
+FROM alpine/git:2.36.3 as build-stage1
+
+# RUN apt-get update
+# RUN apt-get install -y git
+# RUN apt-get install -y nginx
+ARG SSHPRIVATEKEY
+
+RUN mkdir /root/.ssh/   
+RUN echo "${SSHPRIVATEKEY}" > /root/.ssh/id_rsa
+RUN chmod 400 ~/.ssh/id_rsa
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+WORKDIR /MYAPP
+
+RUN git clone git@github.com:kavyakavathiya/simple_html.git
+
+FROM nginx:1.24.0-alpine-slim as run
+COPY --from=build-stage1 /MYAPP/simple_html/index.html /usr/share/nginx/html
+
+# RUN cp /MYAPP/simple_html/index.html /var/www/nginx/html
+
+# CMD [ "nginx", "-g", "daemon off;" ]
