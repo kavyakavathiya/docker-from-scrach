@@ -1,0 +1,8 @@
+first build image git clone withoutssh
+docker build --no-cache --build-arg USERNAME=<your_username> --build-arg USERPASSWORD=<your_password> -t new_img_clone_git:v1 .
+
+then run container
+docker run -d -p 8888:80 --name git_clone_nginx_container_withoutssh2 new_img_clone_git:v1
+
+then type url localhost:8888 in your browser.
+
