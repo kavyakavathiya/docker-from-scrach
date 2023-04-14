@@ -1,0 +1,63 @@
+version: '3.8'
+
+networks:               #define userdefine network list
+  mern-backend-network:           #create user define network name my-network
+    ipam:               #ip adress management driver
+      config:           #specify network configuration
+        - subnet: 172.23.0.2/16 #set subnet for network
+  mern-frontend-network:
+
+services:
+  client1:                # for frontend service
+    build:                # location of dockerfile 
+      context: ./client1  # path of dir of dockerfile
+    image: kavya158/programming-client
+    ports:                #port mapping
+      - "3001:3001"
+      - "443:443"
+    depends_on:           #client1 service depends on this services.
+      - server
+    environment:                     # specify .env file of this service
+      - REACT_APP_PORTBACKEND=${REACT_APP_PORTBACKEND}
+      - REACT_APP_PORTFRONTEND=${REACT_APP_PORTFRONTEND}
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+    volumes:
+      - ./client1/hosting:/etc/nginx/conf.d/     
+    networks:             # network that this service will connect
+      - mern-frontend-network
+
+  server:                 # for backend service
+    build:                # location of dockerfile
+      context: ./server   # path of dir of dockerfile
+    image: kavya158/programming-server
+    ports:                #port mapping
+      - "3000:3000"
+    depends_on:           # server service depends on this services.
+      - db
+    environment:             # specify .env file of this service
+      - MYHOST=${MYHOST}
+      - MYUSER=${MYUSER}
+      - PASSWORD=${PASSWORD}
+      - DATABASE=${DATABASE}
+      - PORTBACKEND=${PORTBACKEND}
+      - PORTFRONTEND=${PORTFRONTEND}
+      - PORT=${PORT}
+    networks:             # network that this service will connect
+      - mern-frontend-network
+      - mern-backend-network
+
+  db:
+    # build: ./
+    image: mysql/mysql-server:8.0 #specify the docker image which need to use.
+    ports:                        #port mapping
+      - "3306:3306"
+    environment:                     # specify .env file of this service
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+
+    volumes:                      #volume for the database so data is not been deleted when container stop.
+      - ./dbbackup:/var/lib/mysql
+    networks:                     # network that this service will connect
+      - mern-backend-network
