@@ -1,0 +1,42 @@
+# server {
+#     listen 8000 default_server; ## listen for ipv4; this line is default and implied
+#     #listen   [::]:80 default ipv6only=on; ## listen for ipv6
+
+#     root /var/www/html/laravel-app/public;
+#     index index.html index.htm index.php;
+#     server_name kavyalaravel.com;
+#     location / {
+#         try_files $uri $uri/ /index.php?$query_string; 
+#         }
+#     location ~ \.php$ {
+#         include snippets/fastcgi-php.conf;
+#         fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+#     }
+#     location ~ /\.ht {
+#         deny all;
+#     }
+# }
+
+server {
+        listen 8000 default_server; ## listen for ipv4;
+
+        root /var/www/html/laravel-app1/public;
+        index index.html index.htm index.php;
+
+        server_name kavyalaravel.com;
+
+        location / {
+                try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+        # his block denies access to files that start with a dot followed by "ht" (such as .htaccess), 
+        #which are typically used to configure Apache web servers and could potentially be used to exploit the Nginx server.
+}
